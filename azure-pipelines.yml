@@ -1,0 +1,49 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- devmoo
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
+    backendServiceArm: 'Test-Bhadram(26f8b34d-f86b-450b-bcab-90a7a66814cb)'
+    backendAzureRmResourceGroupName: 'terraformdemo'
+    backendAzureRmStorageAccountName: 'terraformdemosa1987'
+    backendAzureRmContainerName: 'tfstate'
+    backendAzureRmKey: 'dev.tfstate'
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
+    environmentServiceNameAzureRM: 'Test-Bhadram(26f8b34d-f86b-450b-bcab-90a7a66814cb)'
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
+    environmentServiceNameAzureRM: 'Test-Bhadram(26f8b34d-f86b-450b-bcab-90a7a66814cb)'
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'destroy'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
+    environmentServiceNameAzureRM: 'Test-Bhadram(26f8b34d-f86b-450b-bcab-90a7a66814cb)'
